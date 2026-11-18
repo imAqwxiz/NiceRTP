@@ -1,0 +1,240 @@
+# ============================================================
+#  NiceRTP configuration  (messages use MiniMessage formatting)
+#  /nrtp reload applies changes. /nrtp config toggles the main options in-game.
+# ============================================================
+
+rtp:
+  # false = /rtp teleports instantly (after countdown). true = /rtp opens the chest GUI.
+  use-gui: false
+  # World used when the player's current world can't be used (disabled / not an RTP world).
+  # overworld | nether | end | any exact world name
+  default-world: overworld
+  # Which real world each key points to. "auto" = first world with that environment.
+  worlds:
+    overworld: auto
+    nether: auto
+    end: auto
+  # Worlds where /rtp is blocked (exact names)
+  disabled-worlds: []
+  # Require nicertp.world.<overworld|nether|end> to RTP into that kind of world
+  per-world-permissions: false
+
+cooldown:
+  # Seconds between RTPs (0 = off). Bypass: nicertp.bypass.cooldown
+  seconds: 30
+
+countdown:
+  # Seconds before teleport (0 = instant). Bypass: nicertp.bypass.delay
+  seconds: 3
+  cancel-on-move: true
+  cancel-on-damage: true
+  # How many blocks they may drift before the RTP cancels
+  move-tolerance: 0.5
+  show-title: true
+  show-actionbar: true
+
+effects:
+  sounds: true
+  particles: true
+  particle-type: portal        # any vanilla particle name, e.g. portal, end_rod, cloud
+  particle-count: 60
+  countdown-nausea: false
+  countdown-blindness: false
+  arrival-title: true
+  sound-list:                  # set name to "" to disable one
+    countdown-tick: {name: block.note_block.pling, volume: 0.6, pitch: 1.6}
+    teleport-out:   {name: entity.enderman.teleport, volume: 0.8, pitch: 1.0}
+    teleport-in:    {name: entity.enderman.teleport, volume: 0.8, pitch: 1.3}
+    cancel:         {name: entity.villager.no, volume: 0.8, pitch: 1.0}
+    queue-join:     {name: entity.experience_orb.pickup, volume: 0.8, pitch: 1.0}
+    queue-match:    {name: entity.player.levelup, volume: 0.8, pitch: 1.2}
+    gui-click:      {name: ui.button.click, volume: 0.7, pitch: 1.0}
+
+safety:
+  respect-world-border: true
+  # Ticks of damage immunity after arriving (20 = 1 second, 0 = off)
+  invulnerable-ticks: 60
+  # Blocks you will never be placed on / next to / inside
+  blocked-blocks:
+    - LAVA
+    - FIRE
+    - SOUL_FIRE
+    - MAGMA_BLOCK
+    - CACTUS
+    - CAMPFIRE
+    - SOUL_CAMPFIRE
+    - SWEET_BERRY_BUSH
+    - POWDER_SNOW
+    - COBWEB
+    - WITHER_ROSE
+    - POINTED_DRIPSTONE
+    - TNT
+    - BEDROCK
+  blocked-biomes:
+    - ocean
+    - deep_ocean
+    - cold_ocean
+    - deep_cold_ocean
+    - frozen_ocean
+    - deep_frozen_ocean
+    - lukewarm_ocean
+    - deep_lukewarm_ocean
+    - warm_ocean
+
+locations:
+  overworld:
+    enabled: true
+    center-mode: SPAWN         # SPAWN | ZERO | BORDER | CUSTOM
+    center-x: 0
+    center-z: 0
+    shape: CIRCLE              # CIRCLE | SQUARE
+    min-radius: 500
+    max-radius: 5000
+    max-attempts: 30
+  nether:
+    enabled: true
+    center-mode: ZERO
+    center-x: 0
+    center-z: 0
+    shape: CIRCLE
+    min-radius: 200
+    max-radius: 3000
+    min-y: 32
+    max-y: 120
+    max-attempts: 60
+  end:
+    enabled: true
+    center-mode: ZERO
+    center-x: 0
+    center-z: 0
+    shape: CIRCLE
+    # Outer End islands only exist ~1000+ blocks out, so keep min-radius high
+    min-radius: 1000
+    max-radius: 2500
+    max-attempts: 80
+
+# RTPQ = RTP queue. Players queue up and are teleported together to one random spot.
+rtpq:
+  enabled: false
+  players-required: 2
+  world: overworld
+  countdown-seconds: 3
+  timeout-seconds: 60          # 0 = never time out
+  show-waiting-actionbar: true
+
+gui:
+  title: "<gradient:#55ffff:#55ff99><bold>NiceRTP</bold></gradient> <dark_gray>» <gray>Pick a world"
+  rows: 3                      # 3 = normal chest (min 3, max 6)
+  filler:
+    enabled: true
+    material: GRAY_STAINED_GLASS_PANE
+  items:
+    overworld:
+      enabled: true
+      slot: 10
+      material: GRASS_BLOCK
+      glow: false
+      name: "<green><bold>Overworld"
+      lore:
+        - "<gray>Random teleport somewhere"
+        - "<gray>in the Overworld."
+        - ""
+        - "<gray>Cooldown: <white>%cooldown%"
+        - "<yellow>Click to teleport!"
+    end:
+      enabled: true
+      slot: 13
+      material: END_STONE
+      glow: false
+      name: "<light_purple><bold>The End"
+      lore:
+        - "<gray>Random teleport to the"
+        - "<gray>outer End islands."
+        - ""
+        - "<gray>Cooldown: <white>%cooldown%"
+        - "<yellow>Click to teleport!"
+    nether:
+      enabled: true
+      slot: 16
+      material: NETHERRACK
+      glow: false
+      name: "<red><bold>Nether"
+      lore:
+        - "<gray>Random teleport somewhere"
+        - "<gray>in the Nether."
+        - ""
+        - "<gray>Cooldown: <white>%cooldown%"
+        - "<yellow>Click to teleport!"
+    rtpq:                      # only shown when rtpq.enabled is true
+      slot: 22
+      material: ENDER_PEARL
+      glow: true
+      name: "<aqua><bold>RTPQ <gray>(Queue)"
+      lore:
+        - "<gray>Get teleported to a random"
+        - "<gray>spot together with another player."
+        - ""
+        - "<gray>In queue: <white>%queue_size%<gray>/<white>%required%"
+        - "<yellow>Click to join / leave the queue!"
+
+# Teleport back to where you were before your last RTP: /rtp back
+back:
+  enabled: true
+
+# Teleport brand-new players on first join
+first-join:
+  enabled: false
+  world: overworld
+  delay-ticks: 20
+
+qol:
+  keep-yaw-pitch: true
+
+force:
+  notify-target: true
+
+logging:
+  log-teleports: false
+
+messages:
+  prefix: "<gradient:#55ffff:#55ff99><bold>NiceRTP</bold></gradient> <dark_gray>» <gray>"
+  players-only: "%prefix%<red>Only players can use this."
+  no-permission: "%prefix%<red>You don't have permission."
+  no-permission-world: "%prefix%<red>You can't RTP into that world."
+  unknown-world: "%prefix%<red>Unknown world: <white>%input%"
+  world-disabled: "%prefix%<red>RTP is disabled in <white>%world%<red>."
+  already-teleporting: "%prefix%<red>You're already teleporting."
+  cooldown: "%prefix%<red>Please wait <white>%seconds%s <red>before using RTP again."
+  searching: "%prefix%<gray>Searching for a safe spot..."
+  no-safe-location: "%prefix%<red>Couldn't find a safe location. Try again!"
+  teleport-failed: "%prefix%<red>The teleport failed."
+  countdown-title: "<aqua><bold>%seconds%"
+  countdown-subtitle: "<gray>Stand still..."
+  countdown-actionbar: "<aqua>Teleporting in <white>%seconds%s <gray>- don't move!"
+  teleported: "%prefix%<green>Teleported to <white>%x%, %y%, %z% <gray>in <white>%world%<gray>."
+  arrival-title: "<gradient:#55ffff:#55ff99><bold>Welcome!</bold></gradient>"
+  arrival-subtitle: "<gray>%x%, %y%, %z%"
+  cancelled-moved: "%prefix%<red>Teleport cancelled - you moved."
+  cancelled-damage: "%prefix%<red>Teleport cancelled - you took damage."
+  cancelled-manual: "%prefix%<red>Teleport cancelled."
+  nothing-to-cancel: "%prefix%<red>You have nothing to cancel."
+  rtpq-disabled: "%prefix%<red>RTPQ is disabled."
+  queue-joined: "%prefix%<green>Joined the RTP queue <gray>(<white>%size%<gray>/<white>%required%<gray>)."
+  queue-left: "%prefix%<yellow>You left the RTP queue."
+  queue-timeout: "%prefix%<red>Queue timed out - nobody else joined."
+  queue-waiting: "<aqua>Waiting for players <gray>(%size%/%required%)"
+  queue-matched: "%prefix%<green>Match found! <gray>Teleporting with <white>%players%<gray>."
+  queue-partner-left: "%prefix%<red>Your partner left, teleport cancelled."
+  back-disabled: "%prefix%<red>/rtp back is disabled."
+  no-back: "%prefix%<red>You have no location to go back to."
+  back-teleported: "%prefix%<green>Teleported back."
+  reloaded: "%prefix%<green>Config reloaded."
+  player-not-found: "%prefix%<red>Player not found."
+  force-sender: "%prefix%<green>Force-RTP'd <white>%player%<green>."
+  force-target: "%prefix%<gray>You were randomly teleported by an admin."
+  help:
+    - "%prefix%<white>NiceRTP commands"
+    - "<aqua>/rtp [overworld|nether|end|queue|back|cancel]"
+    - "<aqua>/nrtp reload"
+    - "<aqua>/nrtp config"
+    - "<aqua>/nrtp --forcertp <player> [world]"

@@ -1,0 +1,36 @@
+name: NiceRTP
+version: 1.0.0
+main: com.nicertp.NiceRTP
+api-version: '1.21.11'
+description: Smooth, customizable and comfortable random teleport.
+
+commands:
+  rtp:
+    description: Teleport to a random location
+    usage: /<command> [overworld|nether|end|queue|back|cancel]
+  nicertp:
+    description: NiceRTP admin command
+    usage: /<command> [reload|config|--forcertp <player> [world]]
+    aliases: [nrtp]
+
+permissions:
+  nicertp.use:
+    default: true
+  nicertp.queue:
+    default: true
+  nicertp.back:
+    default: true
+  nicertp.admin:
+    default: op
+  nicertp.force:
+    default: op
+  nicertp.bypass.cooldown:
+    default: op
+  nicertp.bypass.delay:
+    default: op
+  nicertp.world.overworld:
+    default: true
+  nicertp.world.nether:
+    default: true
+  nicertp.world.end:
+    default: true
